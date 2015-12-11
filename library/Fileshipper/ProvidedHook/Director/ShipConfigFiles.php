@@ -16,6 +16,7 @@ class ShipConfigFiles extends ShipConfigFilesHook
         $files = array();
         foreach ($this->getDirectories() as $key => $cfg) {
             try {
+
             foreach ($this->listFiles($cfg->get('source'), $cfg->get('extensions')) as $file) {
                 try {
                     $files[$cfg->target . '/' . $file] = file_get_contents($cfg->get('source') . '/' . $file);
@@ -48,8 +49,12 @@ class ShipConfigFiles extends ShipConfigFilesHook
         $ite = new RecursiveIteratorIterator($dir);
         $files = new RegexIterator($ite, $pattern, RegexIterator::GET_MATCH);
         $fileList = array();
+        $start = strlen($folder) + 1;
+
         foreach($files as $file) {
-            $fileList = array_merge($fileList, $file);
+            foreach ($file as $f) {
+                $fileList[] =  substr($f, $start);
+            }
         }
         return $fileList;
     }
