@@ -15,15 +15,17 @@ class ShipConfigFiles extends ShipConfigFilesHook
     {
         $files = array();
         foreach ($this->getDirectories() as $key => $cfg) {
+
             try {
 
-            foreach ($this->listFiles($cfg->get('source'), $cfg->get('extensions')) as $file) {
-                try {
-                    $files[$cfg->target . '/' . $file] = file_get_contents($cfg->get('source') . '/' . $file);
-                } catch (Exception $e) {
-                    $files[$cfg->target . '/' . $file] = '/* ' . $e->getMessage() . ' */';
+                foreach ($this->listFiles($cfg->get('source'), $cfg->get('extensions')) as $file) {
+                    try {
+                        $files[$cfg->target . '/' . $file] = file_get_contents($cfg->get('source') . '/' . $file);
+                    } catch (Exception $e) {
+                        $files[$cfg->target . '/' . $file] = '/* ' . $e->getMessage() . ' */';
+                    }
                 }
-            }
+
             } catch (Exception $e) {
                 $files[$cfg->target . '/ERROR.txt'] = '/* ' . $e->getMessage() . ' */';
             }
