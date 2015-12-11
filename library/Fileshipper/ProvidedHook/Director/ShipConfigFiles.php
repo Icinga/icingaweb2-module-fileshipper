@@ -34,14 +34,14 @@ class ShipConfigFiles extends ShipConfigFilesHook
     protected function listFiles($folder, $extensions)
     {
         if (! $extensions) {
-            $pattern = '^[^\.].+\.conf$';
+            $pattern = '/^[^\.].+\.conf$/';
         } else {
             $exts = array();
             foreach (preg_split('/\s+/', $extensions, -1, PREG_SPLIT_NO_EMPTY) as $ext) {
-                $exts[] = preg_quote($ext);
+                $exts[] = preg_quote($ext, '/');
             }
 
-            $pattern = '^[^\.].+(?:' . implode('|', $exts) . ')$';
+            $pattern = '/^[^\.].+(?:' . implode('|', $exts) . ')$/';
         }
 
         $dir = new RecursiveDirectoryIterator($folder);
