@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Fileshipper\ProvidedHook\Director;
 
-use Icinga\Application\Config;
-use Icinga\Module\Director\Web\Hook\ShipConfigFilesHook;
 use Exception;
+use Icinga\Application\Config;
+use Icinga\Module\Director\Hook\ShipConfigFilesHook;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
