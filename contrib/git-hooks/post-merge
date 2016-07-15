@@ -1,0 +1,35 @@
+#/usr/bin/env bash
+# Trigger Director config rendering when something changed
+
+# This is a git hook that will run after `git pull`. In case any file was
+# changed it will instruct Director to re-render the current configuration.
+#
+# Add this file to your git working directory as `.git/hooks/post-merge`. It
+# has to executable (`chmod +x`), otherwise it wouldn't run. The `icingacli`
+# has to be on your `PATH` when running `git pull`.
+#
+# TODO: verify whether HEAD@{1} instead of ORIG_HEAD should be preferred
+
+changed_files() {
+    git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD
+}
+
+had_changes()  {
+   local changed_lines=$(changed_files | wc -l)
+   if [ "$changed_lines" -gt "0" ]; then
+       return 0
+   else
+       return 1
+   fi
+}
+
+render_director_config() {
+    `icingacli director config render`
+}
+
+run_if() {
+  $1 && eval "$2"
+}
+
+run_if had_changes render_director_config
+

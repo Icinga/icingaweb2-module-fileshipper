@@ -21,3 +21,7 @@ Please take care, use of this module requires advanced understanding of Icinga2
 configuration. Per default only `.conf` files are synced, you can override this
 with a custom space-separated list for the `extensions` parameter.
 
+In case you want to trigger specific actions like re-rendering or deploying the
+config on changes you might want to have a look at our sample [GIT hook](contrib/git-hooks/post-merge).
+When working with Puppet or similar, please consider notifying an `exec` resource
+with `refreshonly` set to `true` instead.
