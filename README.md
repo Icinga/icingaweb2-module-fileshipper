@@ -1,27 +1,14 @@
 Icinga Web 2 Fileshipper module
 ===============================
 
-The main purpose of this module is to implement a plain file shipping hook
-for Icinga Director. Create a `directories.ini` in this modules config dir,
-usually `/etc/icingaweb2/modules/fileshipper`:
+The main purpose of this module is to extend [Icinga Director](https://github.com/icinga/icingaweb2-module-director)
+using some of it's exported hooks. Based on them it offers an `Import Source`
+able to deal with `CSV`, `JSON`, `YAML` and `XML` files. It also offers the
+possibility to deploy hand-crafted [Icinga 2](https://github.com/Icinga/icinga2)
+config files through the `Icinga Director`.
 
-```ini
-[custom-rules]
-source = /usr/local/src/custom-rules.git
-target = zones.d/director-global/custom-rules
+![Icinga Web 2 Fileshipper](doc/screenshot/fileshipper/01_fileshipper-imports-overview.png)
 
-[test]
-source = /tmp/replication-test
-target = zones.d/director-global/having-fun
-extensions = .conf .md
-```
-
-All local files from `source` will be deployed to the given target directory.
-Please take care, use of this module requires advanced understanding of Icinga2
-configuration. Per default only `.conf` files are synced, you can override this
-with a custom space-separated list for the `extensions` parameter.
-
-In case you want to trigger specific actions like re-rendering or deploying the
-config on changes you might want to have a look at our sample [GIT hook](contrib/git-hooks/post-merge).
-When working with Puppet or similar, please consider notifying an `exec` resource
-with `refreshonly` set to `true` instead.
+For getting started please read our [Installation instructions](doc/02-Installation.md),
+and then you should be ready to dive into [Import Source](doc/03-ImportSource.md)
+definitions and hand-crafted [Config File Shipping](doc/04-FileShipping.md).
