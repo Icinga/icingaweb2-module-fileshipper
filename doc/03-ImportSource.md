@@ -1,5 +1,8 @@
 <a id="ImportSource"></a>Use plain files as an Import Source
-=====================================
+============================================================
+
+The following screenshot shows a bunch of `Import Source` definitions defined
+in the `Icinga Director` based on the this module:
 
 ![Icinga Web 2 Fileshipper](screenshot/fileshipper/01_fileshipper-imports-overview.png)
 
