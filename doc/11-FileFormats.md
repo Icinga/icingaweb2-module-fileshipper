@@ -143,8 +143,8 @@ among tools in hyped niches such as configuration management. I'll pick [Puppet]
 as an example, but this might work in a similar way for many other tools.
 
 Instead of a single YAML file I have to deal with a directory full of files in
-this case. Our Import Source documentation already shows how to configure such,
-here you can see part of such a file:
+this case. Our [Import Source documentation](03-ImportSource.md) already shows
+how to configure such, here you can see part of such a file:
 
 ```yaml
 --- !ruby/object:Puppet::Node::Facts
