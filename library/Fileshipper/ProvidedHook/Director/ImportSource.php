@@ -324,9 +324,14 @@ class ImportSource extends ImportSourceHook
         $dir = new DirectoryIterator($basedir);
         foreach ($dir as $file) {
             if ($file->isFile()) {
-                $files[$file->getBasename()] = $file->getBasename();
+                $filename = $file->getBasename();
+                if ($filename[0] !== '.') {
+                    $files[$filename] = $filename;
+                }
             }
         }
+
+        ksort($files);
 
         return $files;
     }
