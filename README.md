@@ -11,4 +11,5 @@ config files through the `Icinga Director`.
 
 For getting started please read our [Installation instructions](doc/02-Installation.md),
 and then you should be ready to dive into [Import Source](doc/03-ImportSource.md)
-definitions and hand-crafted [Config File Shipping](doc/04-FileShipping.md).
+definitions, [supported file formats](doc/11-FileFormats.md) or and hand-crafted
+[Config File Shipping](doc/04-FileShipping.md).

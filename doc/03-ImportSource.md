@@ -31,6 +31,8 @@ Some file formats may ask for additional settings like the `CSV` one does:
 
 ![CSV file format settings](screenshot/fileshipper/05_fileshipper-csv-details.png)
 
+In case you want to learn more about supported file formats please read the
+related [documentation](11-FileFormats.md).
 
 <a id="fileshipper-file"></a>Select Directory and File(s)
 ---------------------------------------------------------
