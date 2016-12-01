@@ -1,5 +1,5 @@
 Name: Fileshipper
-Version: 0.9.3
+Version: 1.0.0
 Depends: director
 Description: Fileshipper for Icinga Director
  The fileshipper module provides an Import Source for CSV, JSON, XML and YAML
