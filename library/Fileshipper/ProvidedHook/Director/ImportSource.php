@@ -181,7 +181,14 @@ class ImportSource extends ImportSourceHook
                 );
             }
 
-            $lines[] = (object) array_combine($headers, $line);
+            $line = array_combine($headers, $line);
+            foreach ($line as $key => & $value) {
+                if ($value === '') {
+                    $value = null;
+                }
+            }
+            $lines[] = (object) $line;
+
             $row ++;
         }
         fclose($fh);
