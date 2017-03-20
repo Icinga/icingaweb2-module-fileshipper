@@ -24,7 +24,7 @@ Last but not least go to `Configuration / Modules` and enable the `fileshipper`
 module. Otherwise you could also do so on CLI by running:
 
 ```sh
-icingacli director module enable fileshipper
+icingacli module enable fileshipper
 ```
 
 That's all, now you are ready to define your first [Import Source](03-ImportSource.md)
