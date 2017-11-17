@@ -8,6 +8,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
+use Icinga\Module\Fileshipper\Xlsx\Workbook;
 use Symfony\Component\Yaml\Yaml;
 
 class ImportSource extends ImportSourceHook
@@ -58,43 +59,6 @@ class ImportSource extends ImportSourceHook
 
         $format = $form->getSentOrObjectSetting('file_format');
 
-        if ($format === 'csv') {
-            $form->addElement('text', 'csv_delimiter', array(
-                'label'       => $form->translate('Field delimiter'),
-                'description' => $form->translate(
-                    'This sets the field delimiter. One character only, defaults'
-                    . ' to comma: ,'
-                ),
-                'value'       => ',',
-                'required'    => true,
-            ));
-
-            $form->addElement('text', 'csv_enclosure', array(
-                'label'       => $form->translate('Value enclosure'),
-                'description' => $form->translate(
-                    'This sets the field enclosure character. One character only,'
-                    . ' defaults to double quote: "'
-                ),
-                'value'       => '"',
-                'required'    => true,
-            ));
-
-            /*
-            // Not configuring escape as it behaves strangely. "te""st" works fine.
-            // Seems that even in case we use \, it must be "manually" removed later
-            // on
-            $form->addElement('text', 'csv_escape', array(
-                'label'       => $form->translate('Escape character'),
-                'description' => $form->translate(
-                    'This sets the escaping character. One character only,'
-                    . ' defaults to backslash: \\'
-                ),
-                'value'       => '\\',
-                'required'    => true,
-            ));
-            */
-        }
-
         $form->addElement('select', 'basedir', array(
             'label'        => $form->translate('Base directoy'),
             'description'  => sprintf(
@@ -122,10 +86,103 @@ class ImportSource extends ImportSourceHook
                 . ' from there at once'
             ),
             'required'     => true,
+            'autosubmit'   => true,
             'multiOptions' => $form->optionalEnum(self::enumFiles($basedir, $form)),
         ));
 
+        $basedir = $form->getSentOrObjectSetting('basedir');
+        $basename = $form->getSentOrObjectSetting('file_name');
+        if ($basedir === null || $basename === null) {
+            return $form;
+        }
+
+        $filename = sprintf('%s/%s', $basedir, $basename);
+        switch ($format) {
+            case 'csv':
+                static::addCsvElements($form);
+                break;
+
+            case 'xslx':
+                static::addXslxElements($form, $filename);
+                break;
+        }
+
         return $form;
+    }
+
+    protected static function addCsvElements(QuickForm $form)
+    {
+        $form->addElement('text', 'csv_delimiter', array(
+            'label'       => $form->translate('Field delimiter'),
+            'description' => $form->translate(
+                'This sets the field delimiter. One character only, defaults'
+                . ' to comma: ,'
+            ),
+            'value'       => ',',
+            'required'    => true,
+        ));
+
+        $form->addElement('text', 'csv_enclosure', array(
+            'label'       => $form->translate('Value enclosure'),
+            'description' => $form->translate(
+                'This sets the field enclosure character. One character only,'
+                . ' defaults to double quote: "'
+            ),
+            'value'       => '"',
+            'required'    => true,
+        ));
+
+        /*
+        // Not configuring escape as it behaves strangely. "te""st" works fine.
+        // Seems that even in case we use \, it must be "manually" removed later
+        // on
+        $form->addElement('text', 'csv_escape', array(
+            'label'       => $form->translate('Escape character'),
+            'description' => $form->translate(
+                'This sets the escaping character. One character only,'
+                . ' defaults to backslash: \\'
+            ),
+            'value'       => '\\',
+            'required'    => true,
+        ));
+        */
+    }
+
+    protected static function addXslxElements(QuickForm $form, $filename)
+    {
+        $form->addElement('select', 'worksheet_addressing', array(
+            'label'        => $form->translate('Choose worksheet'),
+            'description'  => $form->translate('How to choose a worksheet'),
+            'multiOptions' => array(
+                'by_position' => $form->translate('by position'),
+                'by_name'     => $form->translate('by name'),
+            ),
+            'value'    => 'by_position',
+            'class'    => 'autosubmit',
+            'required' => true,
+        ));
+
+        $addressing = $form->getSentOrObjectSetting('worksheet_addressing');
+        switch ($addressing) {
+
+            case 'by_name':
+                $file = static::loadXslxFile($filename);
+                $form->addElement('text', 'worksheet_name', array(
+                    'label'    => $form->translate('Name'),
+                    'required' => true,
+                    'value'    => $file->getSheetNameById(1)
+                ));
+                break;
+
+            case 'by_position':
+            default:
+                $form->addElement('text', 'worksheet_position', array(
+                    'label'    => $form->translate('Position'),
+                    'required' => true,
+                    'value'    => '1',
+                ));
+                break;
+        }
     }
 
     protected function fetchFiles($basedir, $format)
@@ -149,6 +206,8 @@ class ImportSource extends ImportSourceHook
                 return $this->readJsonFile($filename);
             case 'csv':
                 return $this->readCsvFile($filename);
+            case 'xslx':
+                return $this->readXslxFile($filename);
             case 'xml':
                 libxml_disable_entity_loader(true);
                 return $this->readXmlFile($filename);
@@ -158,6 +217,44 @@ class ImportSource extends ImportSourceHook
                     $format
                 );
         }
+    }
+
+    protected static function loadXslxFile($filename)
+    {
+        return new Workbook($filename);
+    }
+
+    protected function readXslxFile($filename)
+    {
+        $xlsx = new Workbook($filename);
+        if ($this->getSetting('worksheet_addressing') === 'by_name') {
+            $sheet = $xlsx->getSheet($this->getSetting('worksheet_name'));
+        } else {
+            $sheet = $xlsx->getSheet((int) $this->getSetting('worksheet_position'));
+        }
+
+        $data = $sheet->getData();
+
+        $headers = null;
+        $result = [];
+        foreach ($data as $line) {
+            if ($headers === null) {
+                $headers = $line;
+                continue;
+            }
+
+            $row = array();
+            foreach ($line as $key => $val) {
+                if (empty($headers[$key])) {
+                    continue;
+                }
+                $row[$headers[$key]] = $val;
+            }
+
+            $result[] = (object) $row;
+        }
+
+        return $result;
     }
 
     protected function readCsvFile($filename)
@@ -289,6 +386,10 @@ class ImportSource extends ImportSourceHook
             'csv'  => $form->translate('CSV (Comma Separated Value)'),
             'json' => $form->translate('JSON (JavaScript Object Notation)'),
         );
+
+        if (class_exists('\\ZipArchive')) {
+            $formats['xslx'] = $form->translate('XSLX (Microsoft Excel 2007+)');
+        }
 
         if (function_exists('simplexml_load_file')) {
             $formats['xml'] = $form->translate('XML (Extensible Markup Language)');

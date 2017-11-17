@@ -1,0 +1,6 @@
+## Editors
+/.idea/
+.*.sw[op]
+
+## PHP vendor artifacts
+/vendor/

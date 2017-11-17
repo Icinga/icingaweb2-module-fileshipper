@@ -17,6 +17,10 @@ definitions, [supported file formats](doc/11-FileFormats.md) or and hand-crafted
 Changes
 -------
 
+### v1.1.0-pre (current master)
+
+* Added XLSX file support
+
 ### v1.0.1
 
 * CSV files should give NULL for volumns with empty strings (#6)
