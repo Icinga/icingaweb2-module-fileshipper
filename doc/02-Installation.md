@@ -6,6 +6,7 @@
 * Icinga Director (&gt;= 1.1.0)
 * php-xml for optional XML file support
 * php-yaml for optional YAML file support
+* php-zip for optional XLSX file support
 
 When running `PHP 7.x` you need the latest `2.x beta` version for [php-yaml](http://pecl.php.net/package/yaml).
 In case your Linux distribution offers precompiled packages they should be fine, regardless of whether they ship `php-yaml` or `php-syck`. In either case please
