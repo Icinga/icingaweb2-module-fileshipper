@@ -75,7 +75,7 @@ class ImportSource extends ImportSourceHook
         ));
 
 
-        if (! $format || ! ($basedir = $form->getSentOrObjectSetting('basedir'))) {
+        if (! ($basedir = $form->getSentOrObjectSetting('basedir'))) {
             return $form;
         }
 
@@ -85,8 +85,8 @@ class ImportSource extends ImportSourceHook
                 'Choose a file from the above directory or * to import all files'
                 . ' from there at once'
             ),
-            'required'     => true,
-            'autosubmit'   => true,
+            'required' => true,
+            'class'    => 'autosubmit',
             'multiOptions' => $form->optionalEnum(self::enumFiles($basedir, $form)),
         ));
 
