@@ -24,6 +24,9 @@ class Worksheet
     /** @var array */
     protected $config;
 
+    /** @var array */
+    protected $mergeTarget;
+
     public function __construct($xml, $sheetName, Workbook $workbook)
     {
         $this->config = $workbook->config;
@@ -41,6 +44,7 @@ class Worksheet
     protected function parse($xml)
     {
         $this->parseDimensions($xml->dimension);
+        $this->parseMergeCells($xml->mergeCells);
         $this->parseData($xml->sheetData);
     }
 
@@ -53,6 +57,27 @@ class Worksheet
         $this->rowCount = $maxValues[1] + 1;
     }
 
+    protected function parseMergeCells($merges)
+    {
+        $result = [];
+        foreach ($merges->mergeCell as $merge) {
+            $range = (string) $merge['ref'];
+            $cells = explode(':', $range);
+            $fromName = $cells[0];
+            list($fromCol, $fromRow) = $this->getColumnIndex($fromName);
+            list($toCol, $toRow) = $this->getColumnIndex($cells[1]);
+            for ($i = $fromCol; $i <= $toCol; $i++) {
+                for ($j = $fromRow; $j <= $toRow; $j++) {
+                    if ($i !== $fromCol || $j !== $fromRow) {
+                        $result[$j][$i] = [$fromRow, $fromCol];
+                    }
+                }
+            }
+        }
+
+        $this->mergeTarget = $result;
+    }
+
     protected function parseData($sheetData)
     {
         $rows = [];
@@ -60,34 +85,55 @@ class Worksheet
         $lastDataRow = -1;
 
         foreach ($sheetData->row as $row) {
-            $rowNum = (int)$row['r'];
-            if($rowNum != ($curR + 1)) {
+            $rowNum = (int) $row['r'];
+            if ($rowNum != ($curR + 1)) {
                 $missingRows = $rowNum - ($curR + 1);
                 for($i=0; $i < $missingRows; $i++) {
-                    $rows[$curR] = array_pad(array(),$this->colCount,null);
+                    $rows[$curR] = array_pad([], $this->colCount, null);
                     $curR++;
                 }
             }
             $curC = 0;
-            $rowData = array();
+            $rowData = [];
 
             foreach ($row->c as $c) {
                 list($cellIndex,) = $this->getColumnIndex((string) $c['r']);
-                if($cellIndex !== $curC) {
+                if ($cellIndex !== $curC) {
                     $missingCols = $cellIndex - $curC;
-                    for($i=0;$i<$missingCols;$i++) {
+                    for ($i = 0; $i < $missingCols; $i++) {
                         $rowData[$curC] = null;
                         $curC++;
                     }
                 }
                 $val = $this->parseCellValue($c);
-                if(!is_null($val)) {
+
+                if (!is_null($val)) {
                     $lastDataRow = $curR;
                 }
                 $rowData[$curC] = $val;
                 $curC++;
             }
             $rows[$curR] = array_pad($rowData, $this->colCount, null);
+
+            // We clone merged cells, all of them will return the same value
+            // This behavior might eventually become optional with a related
+            // Config flag
+            if (array_key_exists($curR, $this->mergeTarget)) {
+                foreach ($this->mergeTarget[$curR] as $col => $cell) {
+                    if ($rowData[$col] === null) {
+                        $rows[$curR][$col] = $rows[$cell[0]][$cell[1]];
+                    } else {
+                        throw new IcingaException(
+                            '%s should merge into %s, but %s has a value: %s',
+                            $this->makeCellName($cell[0], $cell[1]),
+                            $this->makeCellName($curR, $col),
+                            $this->makeCellName($curR, $col),
+                            $rowData[$col]
+                        );
+                    }
+                }
+            }
+
             $curR++;
         }
 
@@ -108,13 +154,27 @@ class Worksheet
             $index = 0;
 
             for ($i = $colLen-1; $i >= 0; $i--) {
-                $index += (ord($col{$i}) - 64) * pow(26, $colLen-$i-1);
+                $index += (ord($col{$i}) - 64) * pow(26, $colLen - $i - 1);
             }
 
-            return array($index-1, $row-1);
+            return [$index - 1, $row - 1];
         }
 
         throw new IcingaException('Invalid cell index %s', $cell);
+    }
+
+    protected function makeCellName($column, $row)
+    {
+        $str = '';
+
+        $rem = $column + 1;
+        while ($rem > 0) {
+            $mod = $rem % 26;
+            $str = chr($mod + 64) . $str;
+            $rem = ($rem - $mod) / 26;
+        }
+
+        return $str . (string) ($row + 1);
     }
 
     protected function parseCellValue($cell)
@@ -138,7 +198,7 @@ class Worksheet
                 } else if ($value == '1') {
                     $value = true;
                 } else {
-                    $value = (bool)$cell->v;
+                    $value = (bool) $cell->v;
                 }
                 break;
 
@@ -157,10 +217,10 @@ class Worksheet
                 break;
 
             default:
-                if(!isset($cell->v)) {
+                if (!isset($cell->v)) {
                     return null;
                 }
-                $value = (string)$cell->v;
+                $value = (string) $cell->v;
 
                 // Check for numeric values
                 if (is_numeric($value)) {
