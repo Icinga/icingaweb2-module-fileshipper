@@ -167,10 +167,13 @@ class ImportSource extends ImportSourceHook
 
             case 'by_name':
                 $file = static::loadXslxFile($filename);
-                $form->addElement('text', 'worksheet_name', array(
+                $names = $file->getSheetNames();
+                $names = array_combine($names, $names);
+                $form->addElement('select', 'worksheet_name', array(
                     'label'    => $form->translate('Name'),
                     'required' => true,
-                    'value'    => $file->getSheetNameById(1)
+                    'value'    => $file->getFirstSheetName(),
+                    'multiOptions' => $names,
                 ));
                 break;
 
@@ -228,7 +231,7 @@ class ImportSource extends ImportSourceHook
     {
         $xlsx = new Workbook($filename);
         if ($this->getSetting('worksheet_addressing') === 'by_name') {
-            $sheet = $xlsx->getSheet($this->getSetting('worksheet_name'));
+            $sheet = $xlsx->getSheetByName($this->getSetting('worksheet_name'));
         } else {
             $sheet = $xlsx->getSheet((int) $this->getSetting('worksheet_position'));
         }
@@ -243,7 +246,7 @@ class ImportSource extends ImportSourceHook
                 continue;
             }
 
-            $row = array();
+            $row = [];
             foreach ($line as $key => $val) {
                 if (empty($headers[$key])) {
                     continue;
