@@ -242,7 +242,19 @@ class ImportSource extends ImportSourceHook
         $result = [];
         foreach ($data as $line) {
             if ($headers === null) {
-                $headers = $line;
+                $hasValue = false;
+                foreach ($line as $value) {
+                    if ($value !== null) {
+                        $hasValue = true;
+                        break;
+                    }
+                    // For now, no value in the first column means this is no header
+                    break;
+                }
+                if ($hasValue) {
+                    $headers = $line;
+                }
+
                 continue;
             }
 
