@@ -60,6 +60,12 @@ class Worksheet
     protected function parseMergeCells($merges)
     {
         $result = [];
+
+        if ($merges->mergeCell === null) {
+            $this->mergeTarget = $result;
+            return;
+        }
+
         foreach ($merges->mergeCell as $merge) {
             $range = (string) $merge['ref'];
             $cells = explode(':', $range);
