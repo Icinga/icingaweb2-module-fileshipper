@@ -21,11 +21,12 @@ Name:		icingaweb2-module-%{module_name}
 License:	GPLv3
 Group:		Productivity/Networking/Diagnostic
 Version:	%{icinga_version}_neteye%{neteye_version}
-Release:	1
+Release:	2
 Summary:	%{name} Module for Icingaweb2
 Source0:	%{name}.tar.gz
 
 Requires:       php-soap
+Requires:       rh-php71-php-soap
 # Need existing users
 Requires(pre):	httpd
 
@@ -93,6 +94,9 @@ cp -pv *.php *.info *.md LICENSE %{buildroot}%{module_home_dir}
 #| ChangeLog |
 #-------------
 %changelog
+* Fri Apr 20 2018 Benjamin Groeber <Benjamin.Groeber@wuerth-phoenix.com> - 1.0.1_neteye1.0.1-2
+- Add dependency for rh-php71-php-soap
+
 * Wed Dec 20 2017 Benjamin Groeber <Benjamin.Groeber@wuerth-phoenix.com> - 1.0.1_neteye1.0.1-1
 - Cherry picked XLSX support from Master
 
