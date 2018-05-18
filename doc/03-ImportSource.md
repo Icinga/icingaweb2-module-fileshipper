@@ -1,5 +1,4 @@
-<a id="ImportSource"></a>Use Text Files as an Import Source
-===========================================================
+# <a id="ImportSource"></a> Use Text Files as an Import Source
 
 The FileShipper interface allows you to import from plain-text file formats like CSV and JSON.
 
@@ -18,8 +17,7 @@ basedir = "/data/file-import"
 
 
 
-<a id="fileshipper-importsource"></a>Adding a new Import Source
----------------------------------------------------------------
+## <a id="fileshipper-importsource"></a>Adding a new Import Source
 
 From **Director > Import data sources**, click on the "Add" action, then enter a name and description
 for this import source.  For "Source Type", choose the "Import from files (fileshipper)" option as in
@@ -31,8 +29,7 @@ Figure 1.  The form will then expand to include several additional options.
 
 
 
-<a id="fileshipper-format"></a>Choose a File Format
----------------------------------------------------
+## <a id="fileshipper-format"></a>Choose a File Format
 
 Next, enter the name of the principal index column from the file, and choose your desired file type
 from **File Format** as in Figure 2.
@@ -46,8 +43,7 @@ If you would like to learn more about the supported file formats, please read th
 
 
 
-<a id="fileshipper-file"></a>Select the Directory and File(s)
--------------------------------------------------------------
+## <a id="fileshipper-file"></a>Select the Directory and File(s)
 
 You will now be asked to choose a **Base Directory** (Figure 3).
 
