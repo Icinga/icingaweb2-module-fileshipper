@@ -23,7 +23,7 @@ From **Director > Import data sources**, click on the "Add" action, then enter a
 for this import source.  For "Source Type", choose the "Import from files (fileshipper)" option as in
 Figure 1.  The form will then expand to include several additional options.
 
-![Add a Fileshipper Import Source](screenshot/fileshipper/fileshipper-import02.png)
+![Add a Fileshipper Import Source](screenshot/fileshipper-import02.png)
 
 **Figure 1:**  Choosing the FileShipper option.
 
@@ -34,7 +34,7 @@ Figure 1.  The form will then expand to include several additional options.
 Next, enter the name of the principal index column from the file, and choose your desired file type
 from **File Format** as in Figure 2.
 
-![Choose a File Format](screenshot/fileshipper/fileshipper-import03.png)
+![Choose a File Format](screenshot/fileshipper-import03.png)
 
 **Figure 2:**  Choosing the file format.
 
@@ -47,7 +47,7 @@ If you would like to learn more about the supported file formats, please read th
 
 You will now be asked to choose a **Base Directory** (Figure 3).
 
-![Choose a Base Directory](screenshot/fileshipper/fileshipper-import04.png)
+![Choose a Base Directory](screenshot/fileshipper-import04.png)
 
 **Figure 3:**  Choosing the base directory.
 
@@ -66,7 +66,7 @@ basedir = "/data/puppet"
 
 Now you are ready to choose a specific file (Figure 4).
 
-![Choose a specific file](screenshot/fileshipper/fileshipper-import05.png)
+![Choose a specific file](screenshot/fileshipper-import05.png)
 
 **Figure 4:**  Choosing a file or files.
 
@@ -77,7 +77,7 @@ Finally, you need to indicate additional parameters specific to the type of file
 For instance, for CSV files you need to add the delimiter character and field enclosure character
 as in Figure 5.
 
-![Add extra options](screenshot/fileshipper/fileshipper-import05.png)
+![Add extra options](screenshot/fileshipper-import06.png)
 
 **Figure 5:**  Adding additional parameters.
 
