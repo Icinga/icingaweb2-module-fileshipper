@@ -1,73 +1,89 @@
-<a id="ImportSource"></a>Use plain files as an Import Source
-============================================================
+<a id="ImportSource"></a>Use Text Files as an Import Source
+===========================================================
 
-The following screenshot shows a bunch of `Import Source` definitions defined
-in the `Icinga Director` based on the this module:
+The FileShipper interface allows you to import from plain-text file formats like CSV and JSON.
 
-![Icinga Web 2 Fileshipper](screenshot/fileshipper/01_fileshipper-imports-overview.png)
+The documentation below assumes that you are already familiar with Importing and Synchronization
+in Director.  Before using FileShipper, please be sure that the module is ready by:
 
-Hint: This chapter assumes that you are already familiar with the `Icinga Director`
-[Import and Sync](https://github.com/Icinga/icingaweb2-module-director/blob/master/doc/70-Import-and-Sync.md) mechanism.
+* Enabling it in **Configuration > Modules > fileshipper**.
+* Defining a path for files in **/neteye/shared/icingaweb2/conf/modules/fileshipper/imports.ini**:
+```
+$ mkdir /neteye/shared/icingaweb2/conf/modules/fileshipper/
+$ mkdir /data/file-import
+$ cat > /neteye/shared/icingaweb2/conf/modules/fileshipper/imports.ini
+[NetEye File import]
+basedir = "/data/file-import"
+```
 
 
-<a id="fileshipper-importsource"></a>Add a new Import Source
-------------------------------------------------------------
 
-Given that, the next steps should be fairly easy. From the Import Source overview
-shown above click `Add import source` and choose the `Import from files` option
-provided by the `fileshipper` module:
+<a id="fileshipper-importsource"></a>Adding a new Import Source
+---------------------------------------------------------------
 
-![Add a Fileshipper Import Source](screenshot/fileshipper/02_fileshipper-add-importsource.png)
+From **Director > Import data sources**, click on the "Add" action, then enter a name and description
+for this import source.  For "Source Type", choose the "Import from files (fileshipper)" option as in
+Figure 1.  The form will then expand to include several additional options.
+
+![Add a Fileshipper Import Source](screenshot/fileshipper/fileshipper-import02.png)
+
+**Figure 1:**  Choosing the FileShipper option.
+
 
 
 <a id="fileshipper-format"></a>Choose a File Format
 ---------------------------------------------------
 
-Next opt for a specific `File Format`:
+Next, enter the name of the principal index column from the file, and choose your desired file type
+from **File Format** as in Figure 2.
 
-![Choose a File Format](screenshot/fileshipper/03_fileshipper-choose-format.png)
+![Choose a File Format](screenshot/fileshipper/fileshipper-import03.png)
 
-Some file formats may ask for additional settings like the `CSV` one does:
+**Figure 2:**  Choosing the file format.
 
-![CSV file format settings](screenshot/fileshipper/05_fileshipper-csv-details.png)
+If you would like to learn more about the supported file formats, please read the
+[file format documentation](11-FileFormats.md).
 
-In case you want to learn more about supported file formats please read the
-related [documentation](11-FileFormats.md).
 
-<a id="fileshipper-file"></a>Select Directory and File(s)
----------------------------------------------------------
 
-You are also asked to choose a `Base Directory`:
+<a id="fileshipper-file"></a>Select the Directory and File(s)
+-------------------------------------------------------------
 
-![Choose a Base Directory](screenshot/fileshipper/04_fileshipper-choose-basedir.png)
+You will now be asked to choose a **Base Directory** (Figure 3).
 
-Initially, this list is empty. The module doesn't allow you to freely choose any
-file on your system. You have to provide a safe set of base directories in your
-`fileshipper`'s module config directory, usually `/etc/icingaweb2/modules/fileshipper`.
-There you need to create an `imports.ini` that could look as follows:
+![Choose a Base Directory](screenshot/fileshipper/fileshipper-import04.png)
+
+**Figure 3:**  Choosing the base directory.
+
+The FileShipper module doesn't allow you to freely choose any file on your system.  You must
+provide a safe set of base directories in Fileshipper's configuration directory as described
+in the first section above.  You can add additional directories if you wish by modifying
+that file, for instance:
 
 ```ini
-[A bunch of files]
-basedir = "/var/cache/various_files"
+[NetEye File import]
+basedir = "/data/file-import"
 
 [Puppet facts store (YAML directory)]
-basedir = "/var/cache/sample-nodes"
+basedir = "/data/puppet"
 ```
 
-Now you are ready to choose a specific file:
+Now you are ready to choose a specific file (Figure 4).
 
-![Choose a specific file](screenshot/fileshipper/06_fileshipper-choose-file.png)
+![Choose a specific file](screenshot/fileshipper/fileshipper-import05.png)
 
-For some use-cases it might also be quite useful to import `all files` in a given
-directory at once:
+**Figure 4:**  Choosing a file or files.
 
-<a id="fileshipper-puppet"></a>Special Use Case: Puppet
--------------------------------------------------------
+For some use-cases it might also be quite useful to import all files in a given
+directory at once.
 
-![Choose a specific file](screenshot/fileshipper/07_fileshipper-whole-directory.png)
+Finally, you need to indicate additional parameters specific to the type of file you are importing.
+For instance, for CSV files you need to add the delimiter character and field enclosure character
+as in Figure 5.
 
-The example on the screenshot has been configured to import all hosts from a
-Puppet-based environment. If there where a PuppetDB it would have made more sense
-to use the [PuppetDB module](https://github.com/Thomas-Gelf/icingaweb2-module-puppetdb).
-But without such, the `facts store` on the Puppet Master makes still a good data
-source for this task.
+![Add extra options](screenshot/fileshipper/fileshipper-import05.png)
+
+**Figure 5:**  Adding additional parameters.
+
+You can now return to the Preview panel to check that the formatting was correctly recognized,
+or the Import source panel to import the data.
