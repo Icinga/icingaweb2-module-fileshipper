@@ -1,15 +1,20 @@
 # <a id="ImportSource"></a> Use Text Files as an Import Source
 
-The FileShipper interface allows you to import from plain-text file formats like CSV and JSON.
+The FileShipper interface allows you to import objects like hosts, users and groups from plain-text
+file formats like CSV and JSON.
 
-The documentation below assumes that you are already familiar with Importing and Synchronization
-in Director.  Before using FileShipper, please be sure that the module is ready by:
+The documentation below assumes that you are [already familiar with Importing and Synchronization
+in Director](/neteye/doc/icingaweb/chapter/automated-import).  Before using FileShipper, please be
+sure that the module is ready by:
 
 * Enabling it in **Configuration > Modules > fileshipper**.
-* Defining a path for files in **/neteye/shared/icingaweb2/conf/modules/fileshipper/imports.ini**:
+* Creating paths for both the configuration and the files:
 ```
 $ mkdir /neteye/shared/icingaweb2/conf/modules/fileshipper/
 $ mkdir /data/file-import
+```
+And then defining a source path for those files within the following configuration file:
+```
 $ cat > /neteye/shared/icingaweb2/conf/modules/fileshipper/imports.ini
 [NetEye File import]
 basedir = "/data/file-import"
@@ -53,15 +58,15 @@ You will now be asked to choose a **Base Directory** (Figure 3).
 
 The FileShipper module doesn't allow you to freely choose any file on your system.  You must
 provide a safe set of base directories in Fileshipper's configuration directory as described
-in the first section above.  You can add additional directories if you wish by modifying
-that file, for instance:
+in the first section above.  You can include additional directories if you wish by creating
+each directory, and then modifying the configuration file, for instance:
 
 ```ini
-[NetEye File import]
-basedir = "/data/file-import"
+[NetEye CSV File Import]
+basedir = "/data/file-import/csv"
 
-[Puppet facts store (YAML directory)]
-basedir = "/data/puppet"
+[NetEye XSLX File Import]
+basedir = "/data/file-import/xslx"
 ```
 
 Now you are ready to choose a specific file (Figure 4).
@@ -70,16 +75,40 @@ Now you are ready to choose a specific file (Figure 4).
 
 **Figure 4:**  Choosing a file or files.
 
-For some use-cases it might also be quite useful to import all files in a given
+**Note:** For some use-cases it might also be quite useful to import all files in a given
 directory at once.
 
-Finally, you need to indicate additional parameters specific to the type of file you are importing.
-For instance, for CSV files you need to add the delimiter character and field enclosure character
-as in Figure 5.
+Once you have selected the file(s), press the "Add" button.  You will then see two additional
+parameters to fill for the CSV files:  the delimiter character and field enclosure character
+(Figure 5).  After filling them out, you will need to press the "Add" button a second time.
 
-![Add extra options](screenshot/fileshipper-import06.png)
+![Add extra parameters](screenshot/fileshipper-import06.png)
 
 **Figure 5:**  Adding additional parameters.
 
-You can now return to the Preview panel to check that the formatting was correctly recognized,
-or the Import source panel to import the data.
+The new synchronization rule will now appear in the list (Figure 6).  Since you have not
+used it yet, it will be prefixed by a black question mark.
+
+![The newly added import source](screenshot/fileshipper-import07.png)
+
+**Figure 6:**  The newly added import source.
+
+Now follow the steps for **importing** at the page on
+[Importing and Synchronization in Director](/neteye/doc/icingaweb/chapter/automated-import).
+Once complete, you can then look at the Preview panel of the Import Source to check that
+the CSV formatting was correctly recognized.  For instance, given this CSV file:
+
+```
+dnshostname,displayname,OS
+ne4north1.company.com,NE4 North Building 1,Windows
+ne4north2.company.com,NE4 North Building 2,Linux
+```
+
+then Figure 8 shows the following preview:
+
+![CSV preview](screenshot/fileshipper-import08.png)
+
+**Figure 7:**  Previewing the results of CSV import.
+
+If the preview is correct, then you can proceed to Synchronization, or set up a Job to
+synchronize on a regular basis.
