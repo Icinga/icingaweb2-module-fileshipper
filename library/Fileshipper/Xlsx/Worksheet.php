@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Fileshipper\Xlsx;
 
-use Icinga\Exception\IcingaException;
+use RuntimeException;
 
 class Worksheet
 {
@@ -129,13 +129,13 @@ class Worksheet
                     if ($rowData[$col] === null) {
                         $rows[$curR][$col] = $rows[$cell[0]][$cell[1]];
                     } else {
-                        throw new IcingaException(
+                        throw new RuntimeException(sprintf(
                             '%s should merge into %s, but %s has a value: %s',
                             $this->makeCellName($cell[0], $cell[1]),
                             $this->makeCellName($curR, $col),
                             $this->makeCellName($curR, $col),
                             $rowData[$col]
-                        );
+                        ));
                     }
                 }
             }
@@ -166,7 +166,7 @@ class Worksheet
             return [$index - 1, $row - 1];
         }
 
-        throw new IcingaException('Invalid cell index %s', $cell);
+        throw new RuntimeException(sprintf('Invalid cell index %s', $cell));
     }
 
     protected function makeCellName($column, $row)

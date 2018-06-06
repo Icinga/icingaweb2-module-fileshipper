@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Fileshipper\Xlsx;
 
-use Icinga\Exception\IcingaException;
+use RuntimeException;
 use ZipArchive;
 
 /**
@@ -60,11 +60,11 @@ class Workbook
         if (true === ($result = $this->zip->open($filename))) {
             $this->parse();
         } else {
-            throw new IcingaException(
+            throw new RuntimeException(sprintf(
                 'Failed to open %s : %s',
                 $filename,
                 $this->getZipErrorString($result)
-            );
+            ));
         }
     }
 
@@ -82,10 +82,10 @@ class Workbook
     {
         $data = $this->zip->getFromName($name);
         if($data === false) {
-            throw new IcingaException(
+            throw new RuntimeException(sprintf(
                 "File %s does not exist in the Excel file",
                 $name
-            );
+            ));
         } else {
             return $data;
         }
@@ -116,7 +116,7 @@ class Workbook
             }
 
             if ($this->mainRelation === null) {
-                throw new IcingaException(
+                throw new RuntimeException(
                     'Got invalid Excel file, found no main document'
                 );
             }
@@ -238,7 +238,7 @@ class Workbook
         if (is_numeric($sheet)) {
             $sheet = $this->getSheetNameById($sheet);
         } elseif(!is_string($sheet)) {
-            throw new IcingaException("Sheet must be a string or a sheet Id");
+            throw new RuntimeException("Sheet must be a string or a sheet Id");
         }
         if (!array_key_exists($sheet, $this->sheets)) {
             $this->sheets[$sheet] = new Worksheet($this->getSheetXML($sheet), $sheet, $this);
@@ -274,16 +274,16 @@ class Workbook
             }
         }
 
-        throw new IcingaException(
+        throw new RuntimeException(sprintf(
             "Sheet ID %s does not exist in the Excel file",
             $sheetId
-        );
+        ));
     }
 
     public function getFirstSheetName()
     {
         if (empty($this->sheetInfo)) {
-            throw new IcingaException('Workbook contains no sheets');
+            throw new RuntimeException('Workbook contains no sheets');
         }
 
         foreach($this->sheetInfo as $sheetName => $sheetInfo) {
