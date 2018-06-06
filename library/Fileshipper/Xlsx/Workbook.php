@@ -13,9 +13,9 @@ class Workbook
 {
     // XML schemas
     const SCHEMA_OFFICEDOCUMENT  = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument';
-    const SCHEMA_RELATIONSHIP    = 'http://schemas.openxmlformats.org/package/2006/relationships';
     const SCHEMA_OFFICEDOCUMENT_RELATIONSHIP = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
-    const SCHEMA_SHAREDSTRINGS     = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings';
+    const SCHEMA_RELATIONSHIP    = 'http://schemas.openxmlformats.org/package/2006/relationships';
+    const SCHEMA_SHAREDSTRINGS   = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings';
     const SCHEMA_WORKSHEETRELATION = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet';
 
     protected static $zipErrors = [
@@ -81,7 +81,7 @@ class Workbook
     protected function extractFile($name)
     {
         $data = $this->zip->getFromName($name);
-        if($data === false) {
+        if ($data === false) {
             throw new RuntimeException(sprintf(
                 "File %s does not exist in the Excel file",
                 $name
@@ -108,7 +108,7 @@ class Workbook
     protected function getMainDocumentRelation()
     {
         if ($this->mainRelation === null) {
-            foreach($this->getPackageRelationships() as $relation) {
+            foreach ($this->getPackageRelationships() as $relation) {
                 if ($relation['Type'] == self::SCHEMA_OFFICEDOCUMENT) {
                     $this->mainRelation = $relation;
                     break;
@@ -181,7 +181,7 @@ class Workbook
                         $this->extractFile($workbookDir . $relation['Target'])
                     );
 
-                    foreach($sharedStringsXML->si as $val) {
+                    foreach ($sharedStringsXML->si as $val) {
                         if (isset($val->t)) {
                             $this->sharedStrings[] = (string)$val->t;
                         } elseif (isset($val->r)) {
@@ -210,8 +210,8 @@ class Workbook
     // returns an array of sheet names, indexed by sheetId
     public function getSheetNames()
     {
-        $res = array();
-        foreach($this->sheetInfo as $sheetName => $info) {
+        $res = [];
+        foreach ($this->sheetInfo as $sheetName => $info) {
             $res[$info['sheetId']] = $sheetName;
             // $res[$info['rid']] = $sheetName;
         }
@@ -237,7 +237,7 @@ class Workbook
     {
         if (is_numeric($sheet)) {
             $sheet = $this->getSheetNameById($sheet);
-        } elseif(!is_string($sheet)) {
+        } elseif (!is_string($sheet)) {
             throw new RuntimeException("Sheet must be a string or a sheet Id");
         }
         if (!array_key_exists($sheet, $this->sheets)) {
@@ -259,7 +259,7 @@ class Workbook
     public function enumRidNames()
     {
         $res = [];
-        foreach($this->sheetInfo as $name => $info) {
+        foreach ($this->sheetInfo as $name => $info) {
             $res[$name] = $name;
         }
 
@@ -268,8 +268,8 @@ class Workbook
 
     public function getSheetNameById($sheetId)
     {
-        foreach($this->sheetInfo as $sheetName => $sheetInfo) {
-            if($sheetInfo['sheetId'] === $sheetId) {
+        foreach ($this->sheetInfo as $sheetName => $sheetInfo) {
+            if ($sheetInfo['sheetId'] === $sheetId) {
                 return $sheetName;
             }
         }
@@ -286,7 +286,7 @@ class Workbook
             throw new RuntimeException('Workbook contains no sheets');
         }
 
-        foreach($this->sheetInfo as $sheetName => $sheetInfo) {
+        foreach ($this->sheetInfo as $sheetName => $sheetInfo) {
             return $sheetName;
         }
     }

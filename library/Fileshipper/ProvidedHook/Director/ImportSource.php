@@ -192,7 +192,6 @@ class ImportSource extends ImportSourceHook
         /** @var \Icinga\Module\Director\Forms\ImportSourceForm $form */
         $addressing = $form->getSentOrObjectSetting('worksheet_addressing');
         switch ($addressing) {
-
             case 'by_name':
                 $file = static::loadXslxFile($filename);
                 $names = $file->getSheetNames();

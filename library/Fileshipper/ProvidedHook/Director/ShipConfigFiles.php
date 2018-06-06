@@ -59,7 +59,7 @@ class ShipConfigFiles extends ShipConfigFilesHook
         $fileList = [];
         $start = strlen($folder) + 1;
 
-        foreach($files as $file) {
+        foreach ($files as $file) {
             foreach ($file as $f) {
                 $fileList[] =  substr($f, $start);
             }

@@ -94,7 +94,7 @@ class Worksheet
             $rowNum = (int) $row['r'];
             if ($rowNum != ($curR + 1)) {
                 $missingRows = $rowNum - ($curR + 1);
-                for($i=0; $i < $missingRows; $i++) {
+                for ($i = 0; $i < $missingRows; $i++) {
                     $rows[$curR] = array_pad([], $this->colCount, null);
                     $curR++;
                 }
@@ -201,7 +201,7 @@ class Worksheet
                 $value = (string)$cell->v;
                 if ($value === '0') {
                     $value = false;
-                } else if ($value == '1') {
+                } elseif ($value == '1') {
                     $value = true;
                 } else {
                     $value = (bool) $cell->v;
