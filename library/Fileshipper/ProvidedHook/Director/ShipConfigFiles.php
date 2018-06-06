@@ -11,35 +11,41 @@ use RegexIterator;
 
 class ShipConfigFiles extends ShipConfigFilesHook
 {
+    /**
+     * @return array
+     */
     public function fetchFiles()
     {
-        $files = array();
+        $files = [];
         foreach ($this->getDirectories() as $key => $cfg) {
-
+            $target = $cfg->get('target');
             try {
-
                 foreach ($this->listFiles($cfg->get('source'), $cfg->get('extensions')) as $file) {
                     try {
-                        $files[$cfg->target . '/' . $file] = file_get_contents($cfg->get('source') . '/' . $file);
+                        $files["$target/$file"] = file_get_contents($cfg->get('source') . '/' . $file);
                     } catch (Exception $e) {
-                        $files[$cfg->target . '/' . $file] = '/* ' . $e->getMessage() . ' */';
+                        $files["$target/$file"] = '/* ' . $e->getMessage() . ' */';
                     }
                 }
-
             } catch (Exception $e) {
-                $files[$cfg->target . '/ERROR.txt'] = '/* ' . $e->getMessage() . ' */';
+                $files["$target/ERROR.txt"] = '/* ' . $e->getMessage() . ' */';
             }
         }
 
         return $files;
     }
 
+    /**
+     * @param $folder
+     * @param $extensions
+     * @return array
+     */
     protected function listFiles($folder, $extensions)
     {
         if (! $extensions) {
             $pattern = '/^[^\.].+\.conf$/';
         } else {
-            $exts = array();
+            $exts = [];
             foreach (preg_split('/\s+/', $extensions, -1, PREG_SPLIT_NO_EMPTY) as $ext) {
                 $exts[] = preg_quote($ext, '/');
             }
@@ -50,7 +56,7 @@ class ShipConfigFiles extends ShipConfigFilesHook
         $dir = new RecursiveDirectoryIterator($folder);
         $ite = new RecursiveIteratorIterator($dir);
         $files = new RegexIterator($ite, $pattern, RegexIterator::GET_MATCH);
-        $fileList = array();
+        $fileList = [];
         $start = strlen($folder) + 1;
 
         foreach($files as $file) {
@@ -58,18 +64,15 @@ class ShipConfigFiles extends ShipConfigFilesHook
                 $fileList[] =  substr($f, $start);
             }
         }
+
         return $fileList;
     }
 
+    /**
+     * @return Config
+     */
     protected function getDirectories()
     {
         return Config::module('fileshipper', 'directories');
-        $config = Config::module('fileshipper', 'directories');
-        $dirs = array();
-        foreach ($config as $key => $c) {
-            $dirs[$key] = (object) $c->toArray();
-        }
-
-        return $dirs;
     }
 }

@@ -6,9 +6,11 @@ use DirectoryIterator;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
+use Icinga\Module\Director\Exception\JsonException;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Fileshipper\Xlsx\Workbook;
+use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
 class ImportSource extends ImportSourceHook
@@ -22,6 +24,11 @@ class ImportSource extends ImportSourceHook
         return 'Import from files (fileshipper)';
     }
 
+    /**
+     * @return object[]
+     * @throws ConfigurationError
+     * @throws IcingaException
+     */
     public function fetchData()
     {
         $basedir  = $this->getSetting('basedir');
@@ -35,11 +42,21 @@ class ImportSource extends ImportSourceHook
         return (array) $this->fetchFile($basedir, $filename, $format);
     }
 
+    /**
+     * @return array
+     * @throws ConfigurationError
+     * @throws IcingaException
+     */
     public function listColumns()
     {
         return array_keys((array) current($this->fetchData()));
     }
 
+    /**
+     * @param QuickForm $form
+     * @return \Icinga\Module\Director\Forms\ImportSourceForm|QuickForm
+     * @throws \Zend_Form_Exception
+     */
     public static function addSettingsFormFields(QuickForm $form)
     {
         $form->addElement('select', 'file_format', array(
@@ -57,6 +74,7 @@ class ImportSource extends ImportSourceHook
             ),
         ));
 
+        /** @var \Icinga\Module\Director\Forms\ImportSourceForm $form */
         $format = $form->getSentOrObjectSetting('file_format');
 
         $form->addElement('select', 'basedir', array(
@@ -110,6 +128,10 @@ class ImportSource extends ImportSourceHook
         return $form;
     }
 
+    /**
+     * @param QuickForm $form
+     * @throws \Zend_Form_Exception
+     */
     protected static function addCsvElements(QuickForm $form)
     {
         $form->addElement('text', 'csv_delimiter', array(
@@ -148,6 +170,11 @@ class ImportSource extends ImportSourceHook
         */
     }
 
+    /**
+     * @param QuickForm $form
+     * @param $filename
+     * @throws \Zend_Form_Exception
+     */
     protected static function addXslxElements(QuickForm $form, $filename)
     {
         $form->addElement('select', 'worksheet_addressing', array(
@@ -162,6 +189,7 @@ class ImportSource extends ImportSourceHook
             'required' => true,
         ));
 
+        /** @var \Icinga\Module\Director\Forms\ImportSourceForm $form */
         $addressing = $form->getSentOrObjectSetting('worksheet_addressing');
         switch ($addressing) {
 
@@ -188,6 +216,13 @@ class ImportSource extends ImportSourceHook
         }
     }
 
+    /**
+     * @param $basedir
+     * @param $format
+     * @return array
+     * @throws ConfigurationError
+     * @throws IcingaException
+     */
     protected function fetchFiles($basedir, $format)
     {
         $result = array();
@@ -198,6 +233,14 @@ class ImportSource extends ImportSourceHook
         return $result;
     }
 
+    /**
+     * @param $basedir
+     * @param $file
+     * @param $format
+     * @return object[]
+     * @throws ConfigurationError
+     * @throws IcingaException
+     */
     protected function fetchFile($basedir, $file, $format)
     {
         $filename = $basedir . '/' . $file;
@@ -222,11 +265,19 @@ class ImportSource extends ImportSourceHook
         }
     }
 
+    /**
+     * @param $filename
+     * @return Workbook
+     */
     protected static function loadXslxFile($filename)
     {
         return new Workbook($filename);
     }
 
+    /**
+     * @param $filename
+     * @return array
+     */
     protected function readXslxFile($filename)
     {
         $xlsx = new Workbook($filename);
@@ -272,6 +323,10 @@ class ImportSource extends ImportSourceHook
         return $result;
     }
 
+    /**
+     * @param $filename
+     * @return object[]
+     */
     protected function readCsvFile($filename)
     {
         $fh = fopen($filename, 'r');
@@ -287,10 +342,10 @@ class ImportSource extends ImportSourceHook
                 continue;
             }
             if (count($headers) !== count($line)) {
-                throw new IcingaException(
+                throw new RuntimeException(sprintf(
                     'Column count in row %d does not match columns in header row',
                     $row
-                );
+                ));
             }
 
             $line = array_combine($headers, $line);
@@ -308,26 +363,32 @@ class ImportSource extends ImportSourceHook
         return $lines;
     }
 
+    /**
+     * @param $filename
+     * @return object[]
+     */
     protected function readJsonFile($filename)
     {
         $content = @file_get_contents($filename);
         if ($content === false) {
-            throw new IcingaException(
+            throw new RuntimeException(sprintf(
                 'Unable to read JSON file "%s"',
                 $filename
-            );
+            ));
         }
 
         $data = @json_decode($content);
         if ($data === null) {
-            throw new IcingaException(
-                'Unable to load JSON data'
-            );
+            throw JsonException::forLastJsonError('Unable to load JSON data');
         }
 
         return $data;
     }
 
+    /**
+     * @param $file
+     * @return object[]
+     */
     protected function readXmlFile($file)
     {
         $lines = array();
@@ -340,9 +401,13 @@ class ImportSource extends ImportSourceHook
         return $lines;
     }
 
-    protected function normalizeSimpleXML($obj)
+    /**
+     * @param $object
+     * @return object
+     */
+    protected function normalizeSimpleXML($object)
     {
-        $data = $obj;
+        $data = $object;
         if (is_object($data)) {
             $data = (object) get_object_vars($data);
         }
@@ -362,6 +427,10 @@ class ImportSource extends ImportSourceHook
         return $data;
     }
 
+    /**
+     * @param $file
+     * @return object[]
+     */
     protected function readYamlFile($file)
     {
         return $this->fixYamlObjects(
@@ -369,6 +438,10 @@ class ImportSource extends ImportSourceHook
         );
     }
 
+    /**
+     * @param $what
+     * @return object[]
+     */
     protected function fixYamlObjects($what)
     {
         if (is_array($what)) {
@@ -395,6 +468,10 @@ class ImportSource extends ImportSourceHook
         return $what;
     }
 
+    /**
+     * @param QuickForm $form
+     * @return array
+     */
     protected static function listAvailableFormats(QuickForm $form)
     {
         $formats = array(
@@ -417,6 +494,9 @@ class ImportSource extends ImportSourceHook
         return $formats;
     }
 
+    /**
+     * @return array
+     */
     protected static function listBaseDirectories()
     {
         $dirs = array();
@@ -430,6 +510,11 @@ class ImportSource extends ImportSourceHook
         return $dirs;
     }
 
+    /**
+     * @param $basedir
+     * @param QuickForm $form
+     * @return array
+     */
     protected static function enumFiles($basedir, QuickForm $form)
     {
         return array_merge(
@@ -440,6 +525,10 @@ class ImportSource extends ImportSourceHook
         );
     }
 
+    /**
+     * @param $basedir
+     * @return array
+     */
     protected static function listFiles($basedir)
     {
         $files = array();
