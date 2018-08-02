@@ -7,7 +7,7 @@
 AutoReqProv: 0
 
 %define icinga_version 1.0.1
-%define neteye_version 1.0.1
+%define neteye_version 1.0.2
 
 %define module_name fileshipper
 
@@ -21,7 +21,7 @@ Name:		icingaweb2-module-%{module_name}
 License:	GPLv3
 Group:		Productivity/Networking/Diagnostic
 Version:	%{icinga_version}_neteye%{neteye_version}
-Release:	2
+Release:	1
 Summary:	%{name} Module for Icingaweb2
 Source0:	%{name}.tar.gz
 
@@ -94,6 +94,9 @@ cp -pv *.php *.info *.md LICENSE %{buildroot}%{module_home_dir}
 #| ChangeLog |
 #-------------
 %changelog
+* Thu Aug 02 2018 Michele Santuari <michele.santuari@wuerth-phoenix.com> - 1.0.1_neteye1.0.2-1
+- Updated Fileshipper user guide to NetEye (IMF-3)
+
 * Fri Apr 20 2018 Benjamin Groeber <Benjamin.Groeber@wuerth-phoenix.com> - 1.0.1_neteye1.0.1-2
 - Add dependency for rh-php71-php-soap
 
