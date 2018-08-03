@@ -44,7 +44,7 @@ from **File Format** as in Figure 2.
 **Figure 2:**  Choosing the file format.
 
 If you would like to learn more about the supported file formats, please read the
-[file format documentation](11-FileFormats.md).
+[file format documentation](11-FileFormats.md#FileFormats).
 
 
 

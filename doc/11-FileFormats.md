@@ -2,8 +2,7 @@
 ===============================================
 
 Depending on the installed libraries the Import Source currently supports
-multiple file formats. In case you're missing any of the following formats
-in your Director frontend please re-read our [Installation instructions](02-Installation.md).
+multiple file formats.
 
 
 CSV (Comma Separated Value)
