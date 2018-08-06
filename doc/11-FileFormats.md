@@ -1,12 +1,11 @@
-<a id="FileFormats"></a> Supported File Formats
-===============================================
+# <a id="fileshipper-file-formats"></a> Supported File Formats
 
 Depending on the installed libraries the Import Source currently supports
 multiple file formats.
 
 
-CSV (Comma Separated Value)
----------------------------
+
+## <a id="fileshipper-csv-format"></a> CSV (Comma Separated Value)
 
 [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) is a not so well
 defined data format, therefore the Import Source has to make some assumptions
@@ -23,8 +22,12 @@ Basically, the rules to follow are:
   You could also opt for other separators to fit your very custom file format
   containing tabular data
 
-### Sample CSV file
 
+
+### <a id="fileshipper-csv-format-samples"></a> Sample CSV files
+
+
+**Simple Example**
 ```csv
 "host","address","location"
 "csv1.example.com","127.0.0.1","HQ"
@@ -32,7 +35,8 @@ Basically, the rules to follow are:
 "csv3.example.com","127.0.0.3","HQ"
 ```
 
-### More complex but perfectly valid CSV sample
+
+**More complex but perfectly valid CSV sample**
 
 ```csv
 "hostname","ip address","location"
@@ -42,14 +46,19 @@ csv1,"127.0.0.2","H\"ome"
 ```
 
 
-JSON - JavaScript Object Notation
----------------------------------
 
-[JSON](https://en.wikipedia.org/wiki/JSON) is a pretty simple standarized format
+## <a id="fileshipper-json-format"></a> JSON - JavaScript Object Notation
+
+[JSON](https://en.wikipedia.org/wiki/JSON) is a pretty simple standardized format
 with good support among most scripting and programming languages. Nothing special
 to say here, as it is easy to validate.
 
-### Simple JSON example
+
+
+### <a id="fileshipper-json-format-samples"></a> Sample JSON files
+
+
+**Simple JSON example**
 
 This example shows an array of objects:
 
@@ -60,10 +69,10 @@ This example shows an array of objects:
 This is the easiest machine-readable form of a JSON import file.
 
 
-### Pretty-formatted extended JSON example
+**Pretty-formatted extended JSON example**
 
 Single-line JSON files are not very human-friendly, so you'll often meet pretty-
-printed JSON. Such files also make also prefectly valid import candidates:
+printed JSON.  Such files also make perfectly valid import candidates:
 
 ```json
 {
@@ -83,16 +92,15 @@ printed JSON. Such files also make also prefectly valid import candidates:
 ```
 
 
-XML - Extensible Markup Language
---------------------------------
+
+## <a id="fileshipper-xml-format"></a> XML - Extensible Markup Language
 
 When working with [XML](https://en.wikipedia.org/wiki/XML) please try to ship
-simple files as shown in the following example. We'd love to add more features
-like better attribute support or [XPath](https://en.wikipedia.org/wiki/XPATH)-
-based filters. In case you need such, please let us know and ship some exmple
-data, helping us to better understand your requirements!
+simple files as shown in the following example.
 
-### Simple XML example
+
+
+### <a id="fileshipper-xml-format-samples"></a> Sample CSV file
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?> 
@@ -109,17 +117,18 @@ data, helping us to better understand your requirements!
 ```
 
 
-YAML (Ain't Markup Language)
-----------------------------
 
-[YAML](https://en.wikipedia.org/wiki/YAML) is all but simple and well defined,
-it allows you to write the same data in various ways. In case you opt for it
-you might have your reasons and should already be familiar with how to generate
-such files.
+## <a id="fileshipper-xml-format"></a> YAML (Ain't Markup Language)
 
-### Simple YAML example
+[YAML](https://en.wikipedia.org/wiki/YAML) is anything but simple and well defined,
+however it allows you to write the same data in various ways.  This format is useful
+if you already have files in this format, but it's not recommended for future use.
 
-So, let's start with a simple example:
+
+
+### <a id="fileshipper-yaml-format-samples"></a> Sample YAML files
+
+**Simple YAML example**
 
 ```yaml
 ---
@@ -134,16 +143,15 @@ So, let's start with a simple example:
   location: "HQ"
 ```
 
-### Advanced YAML example
 
-People who think that NoSQL solves all there data problems tend to believe that
-YAML solve all their config problems. So, YAML is pretty hip and widely used
-among tools in hyped niches such as configuration management. I'll pick [Puppet](https://puppet.com/)
+**Advanced YAML example**
+
+Here's an example using [Puppet](https://puppet.com/) for database configuration.
 as an example, but this might work in a similar way for many other tools.
 
-Instead of a single YAML file I have to deal with a directory full of files in
-this case. Our [Import Source documentation](03-ImportSource.md) already shows
-how to configure such, here you can see part of such a file:
+Instead of a single YAML file, you may need to deal with a directory full of files.
+The [Import Source documentation](03-ImportSource.md#fileshipper-file") shows you
+how to configure multiple files.  Here you can see a part of one such file:
 
 ```yaml
 --- !ruby/object:Puppet::Node::Facts
@@ -164,7 +172,3 @@ how to configure such, here you can see part of such a file:
     hardwareisa: x86_64
     hostname: foreman
 ```
-
-If this looks foreign to you don't worry, most similar constructs are handled in
-a smooth way by the underlying YAML parser.
-
