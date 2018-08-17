@@ -17,7 +17,7 @@ definitions, [supported file formats](doc/11-FileFormats.md) or and hand-crafted
 Changes
 -------
 
-### v1.1.0-pre (current master)
+### v1.1.0
 
 * Added XLSX file support
 

@@ -11,7 +11,7 @@ class Utils
      */
     public static function parseRichText($is = null)
     {
-        $value = array();
+        $value = [];
         if (isset($is->t)) {
             $value[] = (string)$is->t;
         } else {
@@ -26,11 +26,12 @@ class Utils
     // converts an Excel date field (a number) to a unix timestamp (granularity: seconds)
     public static function toUnixTimeStamp($excelDateTime)
     {
-        if(!is_numeric($excelDateTime)) {
+        if (! is_numeric($excelDateTime)) {
             return $excelDateTime;
         }
         $d = floor($excelDateTime); // seconds since 1900
         $t = $excelDateTime - $d;
+
         return ($d > 0) ? ( $d - 25569 ) * 86400 + $t * 86400 : $t * 86400;
     }
 }
