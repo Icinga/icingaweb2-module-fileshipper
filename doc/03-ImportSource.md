@@ -22,7 +22,7 @@ basedir = "/data/file-import"
 
 
 
-## <a id="fileshipper-importsource"></a>Adding a new Import Source
+## <a id="fileshipper-import-source-add"></a>Adding a new Import Source
 
 From **Director > Import data sources**, click on the "Add" action, then enter a name and description
 for this import source.  For "Source Type", choose the "Import from files (fileshipper)" option as in
@@ -44,7 +44,7 @@ from **File Format** as in Figure 2.
 **Figure 2:**  Choosing the file format.
 
 If you would like to learn more about the supported file formats, please read the
-[file format documentation](11-FileFormats.md).
+[file format documentation](11-FileFormats.md#fileshipper-file-formats).
 
 
 
