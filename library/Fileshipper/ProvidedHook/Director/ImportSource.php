@@ -78,7 +78,7 @@ class ImportSource extends ImportSourceHook
         $format = $form->getSentOrObjectSetting('file_format');
 
         $form->addElement('select', 'basedir', array(
-            'label'        => $form->translate('Base directoy'),
+            'label'        => $form->translate('Base directory'),
             'description'  => sprintf(
                 $form->translate(
                     'This import rule will only work with files relative to this'
