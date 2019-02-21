@@ -130,7 +130,7 @@ class Worksheet
                         $rows[$curR][$col] = $rows[$cell[0]][$cell[1]];
                     } else {
                         throw new RuntimeException(sprintf(
-                            '%s should merge into %s, but %s has a value: %s',
+                            '%s should merge into %s, but %s already has a value: %s',
                             $this->makeCellName($cell[0], $cell[1]),
                             $this->makeCellName($curR, $col),
                             $this->makeCellName($curR, $col),

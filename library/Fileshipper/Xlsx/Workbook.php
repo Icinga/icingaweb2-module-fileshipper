@@ -238,7 +238,7 @@ class Workbook
         if (is_numeric($sheet)) {
             $sheet = $this->getSheetNameById($sheet);
         } elseif (!is_string($sheet)) {
-            throw new RuntimeException("Sheet must be a string or a sheet Id");
+            throw new RuntimeException("Sheet must be a string or a sheet ID");
         }
         if (!array_key_exists($sheet, $this->sheets)) {
             $this->sheets[$sheet] = new Worksheet($this->getSheetXML($sheet), $sheet, $this);
