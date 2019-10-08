@@ -31,15 +31,20 @@ class ImportSource extends ImportSourceHook
      */
     public function fetchData()
     {
-        $basedir  = $this->getSetting('basedir');
+        $basedir = $this->getSetting('basedir');
         $filename = $this->getSetting('file_name');
-        $format   = $this->getSetting('file_format');
+        $format = $this->getSetting('file_format');
+
+        $url = $this->getSetting('url');
+        if ($url !== null) {
+            return (array)$this->fetchFile(null, null, $url, $format);
+        }
 
         if ($filename === '*') {
             return $this->fetchFiles($basedir, $format);
         }
 
-        return (array) $this->fetchFile($basedir, $filename, $format);
+        return (array)$this->fetchFile($basedir, $filename, null, $format);
     }
 
     /**
@@ -49,7 +54,7 @@ class ImportSource extends ImportSourceHook
      */
     public function listColumns()
     {
-        return array_keys((array) current($this->fetchData()));
+        return array_keys((array)current($this->fetchData()));
     }
 
     /**
@@ -60,15 +65,15 @@ class ImportSource extends ImportSourceHook
     public static function addSettingsFormFields(QuickForm $form)
     {
         $form->addElement('select', 'file_format', array(
-            'label'        => $form->translate('File format'),
-            'description'  => $form->translate(
+            'label' => $form->translate('File format'),
+            'description' => $form->translate(
                 'Available file formats, usually CSV, JSON, YAML and XML. Whether'
                 . ' all of those are available eventually depends on various'
                 . ' libraries installed on your system. Please have a look at'
                 . ' the documentation in case your list is not complete.'
             ),
-            'required'     => true,
-            'class'        => 'autosubmit',
+            'required' => true,
+            'class' => 'autosubmit',
             'multiOptions' => $form->optionalEnum(
                 static::listAvailableFormats($form)
             ),
@@ -77,9 +82,15 @@ class ImportSource extends ImportSourceHook
         /** @var \Icinga\Module\Director\Forms\ImportSourceForm $form */
         $format = $form->getSentOrObjectSetting('file_format');
 
+        $form->addElement('text', 'url', array(
+            'label' => $form->translate('URL'),
+            'description' => $form->translate('Enter the URL from where the Config should be imported configuration in'),
+            'required' => false,
+        ));
+
         $form->addElement('select', 'basedir', array(
-            'label'        => $form->translate('Base directory'),
-            'description'  => sprintf(
+            'label' => $form->translate('Base directory'),
+            'description' => sprintf(
                 $form->translate(
                     'This import rule will only work with files relative to this'
                     . ' directory. The content of this list depends on your'
@@ -87,24 +98,24 @@ class ImportSource extends ImportSourceHook
                 ),
                 Config::module('fileshipper', 'imports')->getConfigFile()
             ),
-            'required'     => true,
-            'class'        => 'autosubmit',
+            'required' => false,
+            'class' => 'autosubmit',
             'multiOptions' => $form->optionalEnum(static::listBaseDirectories()),
         ));
 
 
-        if (! ($basedir = $form->getSentOrObjectSetting('basedir'))) {
+        if (!($basedir = $form->getSentOrObjectSetting('basedir'))) {
             return $form;
         }
 
         $form->addElement('select', 'file_name', array(
-            'label'        => $form->translate('File name'),
-            'description'  => $form->translate(
+            'label' => $form->translate('File name'),
+            'description' => $form->translate(
                 'Choose a file from the above directory or * to import all files'
                 . ' from there at once'
             ),
             'required' => true,
-            'class'    => 'autosubmit',
+            'class' => 'autosubmit',
             'multiOptions' => $form->optionalEnum(self::enumFiles($basedir, $form)),
         ));
 
@@ -135,23 +146,23 @@ class ImportSource extends ImportSourceHook
     protected static function addCsvElements(QuickForm $form)
     {
         $form->addElement('text', 'csv_delimiter', array(
-            'label'       => $form->translate('Field delimiter'),
+            'label' => $form->translate('Field delimiter'),
             'description' => $form->translate(
                 'This sets the field delimiter. One character only, defaults'
                 . ' to comma: ,'
             ),
-            'value'       => ',',
-            'required'    => true,
+            'value' => ',',
+            'required' => true,
         ));
 
         $form->addElement('text', 'csv_enclosure', array(
-            'label'       => $form->translate('Value enclosure'),
+            'label' => $form->translate('Value enclosure'),
             'description' => $form->translate(
                 'This sets the field enclosure character. One character only,'
                 . ' defaults to double quote: "'
             ),
-            'value'       => '"',
-            'required'    => true,
+            'value' => '"',
+            'required' => true,
         ));
 
         /*
@@ -178,14 +189,14 @@ class ImportSource extends ImportSourceHook
     protected static function addXslxElements(QuickForm $form, $filename)
     {
         $form->addElement('select', 'worksheet_addressing', array(
-            'label'        => $form->translate('Choose worksheet'),
-            'description'  => $form->translate('How to choose a worksheet'),
+            'label' => $form->translate('Choose worksheet'),
+            'description' => $form->translate('How to choose a worksheet'),
             'multiOptions' => array(
                 'by_position' => $form->translate('by position'),
-                'by_name'     => $form->translate('by name'),
+                'by_name' => $form->translate('by name'),
             ),
-            'value'    => 'by_position',
-            'class'    => 'autosubmit',
+            'value' => 'by_position',
+            'class' => 'autosubmit',
             'required' => true,
         ));
 
@@ -197,9 +208,9 @@ class ImportSource extends ImportSourceHook
                 $names = $file->getSheetNames();
                 $names = array_combine($names, $names);
                 $form->addElement('select', 'worksheet_name', array(
-                    'label'    => $form->translate('Name'),
+                    'label' => $form->translate('Name'),
                     'required' => true,
-                    'value'    => $file->getFirstSheetName(),
+                    'value' => $file->getFirstSheetName(),
                     'multiOptions' => $names,
                 ));
                 break;
@@ -207,9 +218,9 @@ class ImportSource extends ImportSourceHook
             case 'by_position':
             default:
                 $form->addElement('text', 'worksheet_position', array(
-                    'label'    => $form->translate('Position'),
+                    'label' => $form->translate('Position'),
                     'required' => true,
-                    'value'    => '1',
+                    'value' => '1',
                 ));
                 break;
         }
@@ -226,7 +237,7 @@ class ImportSource extends ImportSourceHook
     {
         $result = array();
         foreach (static::listFiles($basedir) as $file) {
-            $result[$file] = (object) $this->fetchFile($basedir, $file, $format);
+            $result[$file] = (object)$this->fetchFile($basedir, $file, null, $format);
         }
 
         return $result;
@@ -240,9 +251,13 @@ class ImportSource extends ImportSourceHook
      * @throws ConfigurationError
      * @throws IcingaException
      */
-    protected function fetchFile($basedir, $file, $format)
+    protected function fetchFile($basedir, $file, $url, $format)
     {
-        $filename = $basedir . '/' . $file;
+        if ($url !== null) {
+            $filename = $url;
+        } else {
+            $filename = $basedir . '/' . $file;
+        }
 
         switch ($format) {
             case 'yaml':
@@ -283,7 +298,7 @@ class ImportSource extends ImportSourceHook
         if ($this->getSetting('worksheet_addressing') === 'by_name') {
             $sheet = $xlsx->getSheetByName($this->getSetting('worksheet_name'));
         } else {
-            $sheet = $xlsx->getSheet((int) $this->getSetting('worksheet_position'));
+            $sheet = $xlsx->getSheet((int)$this->getSetting('worksheet_position'));
         }
 
         $data = $sheet->getData();
@@ -316,7 +331,7 @@ class ImportSource extends ImportSourceHook
                 $row[$headers[$key]] = $val;
             }
 
-            $result[] = (object) $row;
+            $result[] = (object)$row;
         }
 
         return $result;
@@ -353,9 +368,9 @@ class ImportSource extends ImportSourceHook
                     $value = null;
                 }
             }
-            $lines[] = (object) $line;
+            $lines[] = (object)$line;
 
-            $row ++;
+            $row++;
         }
         fclose($fh);
 
@@ -408,7 +423,7 @@ class ImportSource extends ImportSourceHook
     {
         $data = $object;
         if (is_object($data)) {
-            $data = (object) get_object_vars($data);
+            $data = (object)get_object_vars($data);
         }
 
         if (is_object($data)) {
@@ -445,8 +460,8 @@ class ImportSource extends ImportSourceHook
     {
         if (is_array($what)) {
             foreach (array_keys($what) as $key) {
-                if (! is_int($key)) {
-                    $what = (object) $what;
+                if (!is_int($key)) {
+                    $what = (object)$what;
                     break;
                 }
             }
@@ -454,7 +469,7 @@ class ImportSource extends ImportSourceHook
 
         if (is_array($what) || is_object($what)) {
             foreach ($what as $k => $v) {
-                if (! empty($v)) {
+                if (!empty($v)) {
                     if (is_object($what)) {
                         $what->$k = $this->fixYamlObjects($v);
                     } elseif (is_array($what)) {
@@ -474,7 +489,7 @@ class ImportSource extends ImportSourceHook
     protected static function listAvailableFormats(QuickForm $form)
     {
         $formats = array(
-            'csv'  => $form->translate('CSV (Comma Separated Value)'),
+            'csv' => $form->translate('CSV (Comma Separated Value)'),
             'json' => $form->translate('JSON (JavaScript Object Notation)'),
         );
 
