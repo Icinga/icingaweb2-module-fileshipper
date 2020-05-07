@@ -77,6 +77,8 @@ class ImportSource extends ImportSourceHook
         /** @var \Icinga\Module\Director\Forms\ImportSourceForm $form */
         $format = $form->getSentOrObjectSetting('file_format');
 
+        $configFile = Config::module('fileshipper', 'imports')->getConfigFile();
+        $directories = static::listBaseDirectories();
         $form->addElement('select', 'basedir', array(
             'label'        => $form->translate('Base directory'),
             'description'  => sprintf(
@@ -85,13 +87,36 @@ class ImportSource extends ImportSourceHook
                     . ' directory. The content of this list depends on your'
                     . ' configuration in "%s"'
                 ),
-                Config::module('fileshipper', 'imports')->getConfigFile()
+                $configFile
             ),
             'required'     => true,
             'class'        => 'autosubmit',
-            'multiOptions' => $form->optionalEnum(static::listBaseDirectories()),
+            'multiOptions' => $form->optionalEnum($directories),
         ));
+        if (empty($directories)) {
+            $dirElement = $form->getElement('basedir');
+            if (! @file_exists($configFile)) {
+                $dirElement->addError(\sprintf(
+                    'The file "%s" does not exist or is not accessible',
+                    $configFile
+                ));
+            }
+        }
 
+        $ignored = static::listIgnoredBaseDirectories();
+        if (! empty($ignored)) {
+            $list = [];
+            foreach ($ignored as $ignoredDirName => $section) {
+                $list[] = "$section: $ignoredDirName";
+            }
+            $ignoredString = \implode(', ', $list);
+            if (count($list) === 1) {
+                $errorString = 'The following directory has been ignored: %s';
+            } else {
+                $errorString = 'The following directories have been ignored: %s';
+            }
+            $form->addHtmlHint(\sprintf($errorString, $ignoredString));
+        }
 
         if (! ($basedir = $form->getSentOrObjectSetting('basedir'))) {
             return $form;
@@ -502,6 +527,24 @@ class ImportSource extends ImportSourceHook
 
         foreach (Config::module('fileshipper', 'imports') as $key => $section) {
             if (($dir = $section->get('basedir')) && @is_dir($dir)) {
+                $dirs[$dir] = $key;
+            }
+        }
+
+        return $dirs;
+    }
+
+    /**
+     * @return array
+     */
+    protected static function listIgnoredBaseDirectories()
+    {
+        $dirs = array();
+
+        foreach (Config::module('fileshipper', 'imports') as $key => $section) {
+            if (($dir = $section->get('basedir')) && @is_dir($dir)) {
+                // Ignore them
+            } else {
                 $dirs[$dir] = $key;
             }
         }
