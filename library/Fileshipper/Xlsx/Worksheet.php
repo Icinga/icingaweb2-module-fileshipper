@@ -160,7 +160,7 @@ class Worksheet
             $index = 0;
 
             for ($i = $colLen-1; $i >= 0; $i--) {
-                $index += (ord($col{$i}) - 64) * pow(26, $colLen - $i - 1);
+                $index += (ord($col[$i]) - 64) * pow(26, $colLen - $i - 1);
             }
 
             return [$index - 1, $row - 1];
@@ -189,7 +189,7 @@ class Worksheet
         switch ((string) $cell['t']) {
             // Shared string
             case 's':
-                if ((string) $cell->v != '') {
+                if ((string) $cell->v !== '') {
                     $value = $this->workbook->sharedStrings[intval($cell->v)];
                 } else {
                     $value = '';
@@ -198,10 +198,10 @@ class Worksheet
 
             // Boolean
             case 'b':
-                $value = (string)$cell->v;
+                $value = (string) $cell->v;
                 if ($value === '0') {
                     $value = false;
-                } elseif ($value == '1') {
+                } elseif ($value === '1') {
                     $value = true;
                 } else {
                     $value = (bool) $cell->v;
@@ -215,7 +215,7 @@ class Worksheet
 
             // Error message
             case 'e':
-                if ((string)$cell->v != '') {
+                if ((string) $cell->v !== '') {
                     $value = (string)$cell->v;
                 } else {
                     $value = '';
