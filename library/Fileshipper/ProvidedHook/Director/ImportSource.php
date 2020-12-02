@@ -77,8 +77,20 @@ class ImportSource extends ImportSourceHook
         /** @var \Icinga\Module\Director\Forms\ImportSourceForm $form */
         $format = $form->getSentOrObjectSetting('file_format');
 
-        $configFile = Config::module('fileshipper', 'imports')->getConfigFile();
-        $directories = static::listBaseDirectories();
+        try {
+            $configFile = Config::module('fileshipper', 'imports')->getConfigFile();
+            $directories = static::listBaseDirectories();
+            $ignored = static::listIgnoredBaseDirectories();
+            $e = null;
+        } catch (\Throwable $e) {
+            $configFile = null;
+            $directories = [];
+            $ignored = [];
+        } catch (\Exception $e) {
+            $configFile = null;
+            $directories = [];
+            $ignored = [];
+        }
         $form->addElement('select', 'basedir', array(
             'label'        => $form->translate('Base directory'),
             'description'  => sprintf(
@@ -93,7 +105,16 @@ class ImportSource extends ImportSourceHook
             'class'        => 'autosubmit',
             'multiOptions' => $form->optionalEnum($directories),
         ));
-        if (empty($directories)) {
+        if ($configFile === null) {
+            if ($e) {
+                $form->getElement('basedir')->addError(sprintf(
+                    $form->translate(
+                        'Failed to get directories from Fileshipper configuration: %s'
+                    ),
+                    $e->getMessage()
+                ));
+            }
+        } elseif (empty($directories)) {
             $dirElement = $form->getElement('basedir');
             if (! @file_exists($configFile)) {
                 $dirElement->addError(\sprintf(
@@ -103,7 +124,6 @@ class ImportSource extends ImportSourceHook
             }
         }
 
-        $ignored = static::listIgnoredBaseDirectories();
         if (! empty($ignored)) {
             $list = [];
             foreach ($ignored as $ignoredDirName => $section) {
@@ -378,6 +398,7 @@ class ImportSource extends ImportSourceHook
                     $value = null;
                 }
             }
+            unset($value);
             $lines[] = (object) $line;
 
             $row ++;

@@ -17,11 +17,16 @@ definitions, [supported file formats](doc/11-FileFormats.md) or and hand-crafted
 Changes
 -------
 
+### v1.2.0
+
+* FEATURE: PHP 8 support
+* FEATURE: Give guidance on potential misconfiguration (#34)
+
 ### v1.1.0
 
-* Added XLSX file support
+* FEATURE: Added XLSX file support
 
 ### v1.0.1
 
-* CSV files should give NULL for volumns with empty strings (#6)
-* Small documentation fix
+* FEATURE: CSV files should give NULL for columns with empty strings (#6)
+* FIX: Small documentation fix
