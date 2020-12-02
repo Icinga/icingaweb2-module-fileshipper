@@ -21,6 +21,7 @@ Changes
 
 * FEATURE: PHP 8 support
 * FEATURE: Give guidance on potential misconfiguration (#34)
+* FEATURE: do not fail on malformed config file (#35)
 
 ### v1.1.0
 
