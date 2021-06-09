@@ -165,8 +165,8 @@ class ImportSource extends ImportSourceHook
                 static::addCsvElements($form);
                 break;
 
-            case 'xslx':
-                static::addXslxElements($form, $filename);
+            case 'xlsx':
+                static::addXlsxElements($form, $filename);
                 break;
         }
 
@@ -220,7 +220,7 @@ class ImportSource extends ImportSourceHook
      * @param $filename
      * @throws \Zend_Form_Exception
      */
-    protected static function addXslxElements(QuickForm $form, $filename)
+    protected static function addXlsxElements(QuickForm $form, $filename)
     {
         $form->addElement('select', 'worksheet_addressing', array(
             'label'        => $form->translate('Choose worksheet'),
@@ -238,7 +238,7 @@ class ImportSource extends ImportSourceHook
         $addressing = $form->getSentOrObjectSetting('worksheet_addressing');
         switch ($addressing) {
             case 'by_name':
-                $file = static::loadXslxFile($filename);
+                $file = static::loadXlsxFile($filename);
                 $names = $file->getSheetNames();
                 $names = array_combine($names, $names);
                 $form->addElement('select', 'worksheet_name', array(
@@ -296,8 +296,8 @@ class ImportSource extends ImportSourceHook
                 return $this->readJsonFile($filename);
             case 'csv':
                 return $this->readCsvFile($filename);
-            case 'xslx':
-                return $this->readXslxFile($filename);
+            case 'xlsx':
+                return $this->readXlsxFile($filename);
             case 'xml':
                 libxml_disable_entity_loader(true);
                 return $this->readXmlFile($filename);
@@ -313,7 +313,7 @@ class ImportSource extends ImportSourceHook
      * @param $filename
      * @return Workbook
      */
-    protected static function loadXslxFile($filename)
+    protected static function loadXlsxFile($filename)
     {
         return new Workbook($filename);
     }
@@ -322,7 +322,7 @@ class ImportSource extends ImportSourceHook
      * @param $filename
      * @return array
      */
-    protected function readXslxFile($filename)
+    protected function readXlsxFile($filename)
     {
         $xlsx = new Workbook($filename);
         if ($this->getSetting('worksheet_addressing') === 'by_name') {
@@ -525,7 +525,7 @@ class ImportSource extends ImportSourceHook
         );
 
         if (class_exists('\\ZipArchive')) {
-            $formats['xslx'] = $form->translate('XSLX (Microsoft Excel 2007+)');
+            $formats['xlsx'] = $form->translate('XLSX (Microsoft Excel 2007+)');
         }
 
         if (function_exists('simplexml_load_file')) {
