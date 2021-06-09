@@ -86,7 +86,7 @@ printed JSON. Such files also make also prefectly valid import candidates:
 Microsoft Excel
 ---------------
 
-XSLX, the Microsoft Excel 2007+ format is supported since v1.1.0.
+XLSX, the Microsoft Excel 2007+ format is supported since v1.1.0.
 
 
 XML - Extensible Markup Language
