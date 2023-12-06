@@ -1,6 +1,15 @@
 ## Editors
-/.idea/
+.idea
+\#*
+.\#*
 .*.sw[op]
+
+# phpunit
+_libraries/
+_icingaweb2/
+*.cache
+coverage/
 
 ## PHP vendor artifacts
 /vendor/
+library/vendor/
