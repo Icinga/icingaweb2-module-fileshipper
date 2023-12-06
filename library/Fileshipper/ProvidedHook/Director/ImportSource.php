@@ -299,7 +299,9 @@ class ImportSource extends ImportSourceHook
             case 'xslx':
                 return $this->readXslxFile($filename);
             case 'xml':
-                libxml_disable_entity_loader(true);
+                if (\PHP_VERSION_ID < 80000) {
+                    libxml_disable_entity_loader(true);
+                }
                 return $this->readXmlFile($filename);
             default:
                 throw new ConfigurationError(
