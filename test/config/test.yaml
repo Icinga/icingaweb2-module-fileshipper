@@ -1,0 +1,5 @@
+---
+- host: "host1"
+  address: "127.0.0.1"
+- host: "host2"
+  address: "127.0.0.2"

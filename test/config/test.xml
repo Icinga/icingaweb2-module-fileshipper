@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<hosts>
+  <host>
+    <host>host1</host>
+    <address>127.0.0.1</address>
+  </host>
+  <host>
+    <host>host2</host>
+    <address>127.0.0.2</address>
+  </host>
+</hosts>
