@@ -63,9 +63,9 @@ class ImportSource extends ImportSourceHook
             'label'        => $form->translate('File format'),
             'description'  => $form->translate(
                 'Available file formats, usually CSV, JSON, YAML and XML. Whether'
-                . ' all of those are available eventually depends on various'
-                . ' libraries installed on your system. Please have a look at'
-                . ' the documentation in case your list is not complete.'
+                . ' these are currently available depends on various'
+                . ' libraries installed on your system.  Please see'
+                . ' the documentation if you do not see the complete list.'
             ),
             'required'     => true,
             'class'        => 'autosubmit',
@@ -182,8 +182,8 @@ class ImportSource extends ImportSourceHook
         $form->addElement('text', 'csv_delimiter', array(
             'label'       => $form->translate('Field delimiter'),
             'description' => $form->translate(
-                'This sets the field delimiter. One character only, defaults'
-                . ' to comma: ,'
+                'This sets the field delimiter.  It must be exactly one'
+                . '  character, defaults to comma: ,'
             ),
             'value'       => ',',
             'required'    => true,
@@ -192,8 +192,8 @@ class ImportSource extends ImportSourceHook
         $form->addElement('text', 'csv_enclosure', array(
             'label'       => $form->translate('Value enclosure'),
             'description' => $form->translate(
-                'This sets the field enclosure character. One character only,'
-                . ' defaults to double quote: "'
+                'This sets the field enclosure character. It must be exactly'
+                . ' one character,defaults to double quote: "'
             ),
             'value'       => '"',
             'required'    => true,
