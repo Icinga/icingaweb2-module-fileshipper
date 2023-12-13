@@ -95,4 +95,17 @@ final class ImportSourceTest extends TestCase
         // Requires php-xml
         $this->assertEquals($is->fetchData(), $this->actualData);
     }
+
+    public function testlistColumns(): void
+    {
+        $is = new ImportSource();
+
+        $is->setSettings([
+            'basedir' => getcwd() . '/test/config',
+            'file_name' => 'test.json',
+            'file_format' => 'json']
+        );
+
+        $this->assertEquals($is->listColumns(), [0 => 'host', 1 => 'address']);
+    }
 }

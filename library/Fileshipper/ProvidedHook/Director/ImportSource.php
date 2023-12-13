@@ -49,7 +49,13 @@ class ImportSource extends ImportSourceHook
      */
     public function listColumns()
     {
-        return array_keys((array) current($this->fetchData()));
+        $rows = $this->fetchData();
+
+        if (empty($rows)) {
+            return [];
+        }
+
+        return array_keys((array) $rows[0]);
     }
 
     /**
