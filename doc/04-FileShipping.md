@@ -33,7 +33,7 @@ this with a custom space-separated list for the `extensions` parameter.
 
 In case you want to trigger specific actions like re-rendering or deploying the
 config on changes you might want to have a look at our sample GIT hook in
-[contrib/git-hooks/post-merge](../contrib/git-hooks/post-merge).
+[contrib/git-hooks/post-merge](https://github.com/Icinga/icingaweb2-module-fileshipper/blob/master/contrib/git-hooks/post-merge).
 
 When working with Puppet or similar, please consider notifying an `exec` resource
 with `refreshonly` set to `true` instead.
