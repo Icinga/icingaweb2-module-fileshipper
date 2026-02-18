@@ -36,3 +36,18 @@ icingacli module enable fileshipper
 
 That's all, now you are ready to define your first [Import Source](03-ImportSource.md)
 definitions and to ship hand-crafted plain Icinga 2 [Config Files](04-FileShipping.md)!
+
+## Setup Base Directory
+
+The module doesn't allow you to freely choose any file on your system.
+
+You have to provide a safe set of base directories in your `fileshipper`'s module config directory,
+usually `/etc/icingaweb2/modules/fileshipper`. There you need to create an `imports.ini` that could look as follows:
+
+```ini
+[A bunch of files]
+basedir = "/var/cache/various_files"
+
+[Puppet facts store (YAML directory)]
+basedir = "/var/cache/sample-nodes"
+```
