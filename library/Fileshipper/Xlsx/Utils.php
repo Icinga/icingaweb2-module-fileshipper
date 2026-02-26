@@ -13,10 +13,10 @@ class Utils
     {
         $value = [];
         if (isset($is->t)) {
-            $value[] = (string)$is->t;
+            $value[] = (string) $is->t;
         } else {
             foreach ($is->r as $run) {
-                $value[] = (string)$run->t;
+                $value[] = (string) $run->t;
             }
         }
 

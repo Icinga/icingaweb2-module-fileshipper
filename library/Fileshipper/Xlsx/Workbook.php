@@ -12,11 +12,16 @@ use ZipArchive;
 class Workbook
 {
     // XML schemas
-    const SCHEMA_OFFICEDOCUMENT  = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument';
-    const SCHEMA_OFFICEDOCUMENT_RELATIONSHIP = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
-    const SCHEMA_RELATIONSHIP    = 'http://schemas.openxmlformats.org/package/2006/relationships';
-    const SCHEMA_SHAREDSTRINGS   = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings';
-    const SCHEMA_WORKSHEETRELATION = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet';
+    public const SCHEMA_OFFICEDOCUMENT =
+        'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument';
+    public const SCHEMA_OFFICEDOCUMENT_RELATIONSHIP =
+        'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    public const SCHEMA_RELATIONSHIP =
+        'http://schemas.openxmlformats.org/package/2006/relationships';
+    public const SCHEMA_SHAREDSTRINGS =
+        'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings';
+    public const SCHEMA_WORKSHEETRELATION =
+        'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet';
 
     protected static $zipErrors = [
         ZipArchive::ER_EXISTS => 'File already exists',
@@ -164,8 +169,8 @@ class Workbook
             // $sheets[$pos] = [ --> check docs
             $sheets[$rId] = [
                 'rId'     => $rId,
-                'sheetId' => (int)$sheet['sheetId'],
-                'name'    => (string)$sheet['name'],
+                'sheetId' => (int) $sheet['sheetId'],
+                'name'    => (string) $sheet['name'],
             ];
         }
 
@@ -173,7 +178,7 @@ class Workbook
         foreach ($this->getWorkbookRelationShips() as $relation) {
             switch ($relation['Type']) {
                 case self::SCHEMA_WORKSHEETRELATION:
-                    $sheets[(string) $relation['Id']]['path'] = $workbookDir . (string)$relation['Target'];
+                    $sheets[(string) $relation['Id']]['path'] = $workbookDir . (string) $relation['Target'];
                     break;
 
                 case self::SCHEMA_SHAREDSTRINGS:
@@ -183,7 +188,7 @@ class Workbook
 
                     foreach ($sharedStringsXML->si as $val) {
                         if (isset($val->t)) {
-                            $this->sharedStrings[] = (string)$val->t;
+                            $this->sharedStrings[] = (string) $val->t;
                         } elseif (isset($val->r)) {
                             $this->sharedStrings[] = Utils::parseRichText($val);
                         }
@@ -237,10 +242,10 @@ class Workbook
     {
         if (is_numeric($sheet)) {
             $sheet = $this->getSheetNameById($sheet);
-        } elseif (!is_string($sheet)) {
+        } elseif (! is_string($sheet)) {
             throw new RuntimeException("Sheet must be a string or a sheet ID");
         }
-        if (!array_key_exists($sheet, $this->sheets)) {
+        if (! array_key_exists($sheet, $this->sheets)) {
             $this->sheets[$sheet] = new Worksheet($this->getSheetXML($sheet), $sheet, $this);
         }
 
@@ -249,7 +254,7 @@ class Workbook
 
     public function getSheetByName($name)
     {
-        if (!array_key_exists($name, $this->sheets)) {
+        if (! array_key_exists($name, $this->sheets)) {
             $this->sheets[$name] = new Worksheet($this->getSheetXML($name), $name, $this);
         }
 
