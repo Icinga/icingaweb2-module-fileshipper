@@ -381,9 +381,9 @@ class ImportSource extends ImportSourceHook
         $enclosure = $this->getSetting('csv_enclosure');
         // $escape    = $this->getSetting('csv_escape');
 
-        $headers = fgetcsv($fh, 0, $delimiter, $enclosure/*, $escape*/);
+        $headers = fgetcsv($fh, 0, $delimiter, $enclosure, '\\');
         $row = 1;
-        while ($line = fgetcsv($fh, 0, $delimiter, $enclosure/*, $escape*/)) {
+        while ($line = fgetcsv($fh, 0, $delimiter, $enclosure, '\\')) {
             if (empty($line)) {
                 continue;
             }

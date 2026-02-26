@@ -234,8 +234,6 @@ class Worksheet
                         $value = (int) $value;
                     } elseif ($value == (float) $value) {
                         $value = (float) $value;
-                    } elseif ($value == (double) $value) {
-                        $value = (double) $value;
                     }
                 }
         }
