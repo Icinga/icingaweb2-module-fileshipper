@@ -113,7 +113,7 @@ class Worksheet
                 }
                 $val = $this->parseCellValue($c);
 
-                if (!is_null($val)) {
+                if (! is_null($val)) {
                     $lastDataRow = $curR;
                 }
                 $rowData[$curC] = $val;
@@ -159,7 +159,7 @@ class Worksheet
             $colLen = strlen($col);
             $index = 0;
 
-            for ($i = $colLen-1; $i >= 0; $i--) {
+            for ($i = $colLen - 1; $i >= 0; $i--) {
                 $index += (ord($col[$i]) - 64) * pow(26, $colLen - $i - 1);
             }
 
@@ -216,14 +216,14 @@ class Worksheet
             // Error message
             case 'e':
                 if ((string) $cell->v !== '') {
-                    $value = (string)$cell->v;
+                    $value = (string) $cell->v;
                 } else {
                     $value = '';
                 }
                 break;
 
             default:
-                if (!isset($cell->v)) {
+                if (! isset($cell->v)) {
                     return null;
                 }
                 $value = (string) $cell->v;

@@ -12,11 +12,11 @@ final class ImportSourceTest extends TestCase
     protected function setUp(): void
     {
         $this->actualData = [
-            '0' => (object)[
+            '0' => (object) [
                 'host' => 'host1',
                 'address' => '127.0.0.1'
             ],
-            '1' => (object)[
+            '1' => (object) [
                 'host' => 'host2',
                 'address' => '127.0.0.2'
             ]];
@@ -31,8 +31,7 @@ final class ImportSourceTest extends TestCase
             'file_name' => 'test.csv',
             'file_format' => 'csv',
             'csv_delimiter' => ',',
-            'csv_enclosure' => '"']
-        );
+            'csv_enclosure' => '"']);
 
 
         $this->assertSame($is->getName(), 'Import from files (fileshipper)');
@@ -46,8 +45,7 @@ final class ImportSourceTest extends TestCase
         $is->setSettings([
             'basedir' => getcwd() . '/test/config',
             'file_name' => 'test.json',
-            'file_format' => 'json']
-        );
+            'file_format' => 'json']);
 
         $this->assertEquals($is->fetchData(), $this->actualData);
     }
@@ -59,8 +57,7 @@ final class ImportSourceTest extends TestCase
         $is->setSettings([
             'basedir' => getcwd() . '/test/config',
             'file_name' => 'test.yaml',
-            'file_format' => 'yaml']
-        );
+            'file_format' => 'yaml']);
 
         // Requires php-yaml
         $this->assertEquals($is->fetchData(), $this->actualData);

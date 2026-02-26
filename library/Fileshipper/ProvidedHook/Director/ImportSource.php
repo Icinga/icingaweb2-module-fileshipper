@@ -403,7 +403,7 @@ class ImportSource extends ImportSourceHook
             unset($value);
             $lines[] = (object) $line;
 
-            $row ++;
+            $row++;
         }
         fclose($fh);
 
