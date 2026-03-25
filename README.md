@@ -17,6 +17,11 @@ definitions, [supported file formats](doc/11-FileFormats.md) or and hand-crafted
 Changes
 -------
 
+### v1.3.0
+
+* FEATURE: Support PHP 8.5
+* FIX: Improve English in GUI labels
+
 ### v1.2.0
 
 * FEATURE: PHP 8 support
