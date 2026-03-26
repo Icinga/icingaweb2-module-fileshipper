@@ -8,7 +8,7 @@
 * php-yaml for optional YAML file support
 * php-zip for optional XLSX file support
 
-When running `PHP 7.x` you'll need the latest `2.x beta` version for [php-yaml](http://pecl.php.net/package/yaml).
+If your distribution ships an older build of [php-yaml](http://pecl.php.net/package/yaml), make sure to use a release compatible with `PHP ≥ 8.2`.
 In case your Linux distribution offers precompiled packages they should be fine, regardless of whether they ship `php-yaml` or `php-syck`. In either case please
 let me know as I didn't test them on different operatingsystems yet.
 
